@@ -26,8 +26,8 @@ import java.io.Serializable;
 import java.util.Enumeration;
 import java.util.Vector;
 
-/** 
- * Class representing a range of cardinal numbers. The range is set by a 
+/**
+ * Class representing a range of cardinal numbers. The range is set by a
  * string representation such as: <P>
  *
  * <code>
@@ -43,7 +43,7 @@ import java.util.Vector;
  */
 public class Range
   implements Serializable, RevisionHandler {
-  
+
   /** for serialization */
   static final long serialVersionUID = 3667337062176835900L;
 
@@ -51,13 +51,16 @@ public class Range
   /*@non_null spec_public@*/Vector m_RangeStrings = new Vector();
 
   /** Whether matching should be inverted */
+  //表示（范围中）是否反转，此项为true的话将选中那些不在给定范围的列
   /*@spec_public@*/ boolean m_Invert;
 
   /** The array of flags for whether an column is selected */
+  //表示（范围中）每一列是否被选中，  m_Invert ^ m_SelectFlags = True的表示真正合法的列
   /*@spec_public@*/boolean [] m_SelectFlags;
 
   /** Store the maximum value permitted in the range. -1 indicates that
       no upper value has been set */
+  //表示范围最大的量，即last的值
   /*@spec_public@*/ int m_Upper = -1;
 
   /** Default constructor. */
@@ -88,11 +91,11 @@ public class Range
       setFlags();
     }
   }
-  
+
   /**
    * Gets whether the range sense is inverted, i.e. all <i>except</i>
    * the values included by the range string are selected.
-   * 
+   *
    * @return whether the matching sense is inverted
    */
   //@ensures \result <==> m_Invert;
@@ -104,7 +107,7 @@ public class Range
   /**
    * Sets whether the range sense is inverted, i.e. all <i>except</i>
    * the values included by the range string are selected.
-   * 
+   *
    * @param newSetting true if the matching sense is inverted
    */
   public void setInvert(boolean newSetting) {
@@ -143,6 +146,7 @@ public class Range
    */
   //@requires rangeList != null;
   //@assignable m_RangeStrings,m_SelectFlags;
+  //rangeList是这种形式： 1-5,7-11 多个range之间用,分隔
   public void setRanges(String rangeList) {
 
     Vector ranges = new Vector (10);
@@ -168,7 +172,7 @@ public class Range
   /**
    * Gets whether the supplied cardinal number is included in the current
    * range.
-   *
+   * 会查看是否invert来看某个值是否在给定范围中
    * @param index the number of interest
    * @return true if index is in the current range
    * @throws RuntimeException if the upper limit of the range hasn't been defined
@@ -190,7 +194,7 @@ public class Range
   /**
    * Constructs a representation of the current range. Being a string
    * representation, the numbers are based from 1.
-   * 
+   *
    * @return the string representation of the current range
    */
   public /*@non_null pure@*/ String toString() {
@@ -353,7 +357,7 @@ public class Range
    *
    * @param range the string representation of the range
    * @return the lower index of the range
-   */ 
+   */
   protected int rangeLower(/*@non_null@*/ String range) {
 
     int hyphenIndex;
@@ -373,7 +377,7 @@ public class Range
    */
   protected int rangeUpper(/*@non_null@*/ String range) {
 
-    int hyphenIndex;
+    int hyphenIndex;//hyphen:连字符
     if ((hyphenIndex = range.indexOf('-')) >= 0) {
       return Math.max(rangeUpper(range.substring(0, hyphenIndex)),
 		       rangeUpper(range.substring(hyphenIndex + 1)));
@@ -382,9 +386,16 @@ public class Range
   }
 
   /**
+   *
    * Determines if a string represents a valid index or simple range.
    * Examples: <code>first  last   2   first-last  first-4  4-last</code>
    * Doesn't check that a < b for a-b
+   *
+   * 验证给定的一个range（没有逗号）是否是合理的
+   * 合理的包括：
+   * 1.单一的范围，即单值，单值的话不能大于last+1
+   * 2.由连字符表示的最小-最大范围
+   * 3.不会验证 最小  是否  小于最大，所以你写last-first也是可以的
    *
    * @param range the string to check
    * @return true if the range is valid
@@ -418,10 +429,10 @@ public class Range
       return false;
     }
   }
-  
+
   /**
    * Returns the revision string.
-   * 
+   *
    * @return		the revision
    */
   public String getRevision() {
@@ -441,8 +452,8 @@ public class Range
       }
       Range range = new Range();
       range.setRanges(argv[0]);
-      range.setUpper(9);
-      range.setInvert(false);
+      range.setUpper(14);
+      range.setInvert(true);
       System.out.println("Input: " + argv[0] + "\n"
 			 + range.toString());
       int [] rangeIndices = range.getSelection();
