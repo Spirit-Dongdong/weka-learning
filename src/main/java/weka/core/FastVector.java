@@ -30,6 +30,7 @@ import java.util.Enumeration;
  * methods. Replaces java.util.Vector. (Synchronized methods tend to
  * be slow.)
  *
+ * 一个快速的，取消了同步方法的Vector
  * @author Eibe Frank (eibe@cs.waikato.ac.nz)
  * @version $Revision: 1.16 $
  */
@@ -113,7 +114,7 @@ public class FastVector
      */
     //@ also requires hasMoreElements();
     public final Object nextElement() {
-  
+
       Object result = m_Vector.elementAt(m_Counter);
 
       m_Counter++;
@@ -122,10 +123,10 @@ public class FastVector
       }
       return result;
     }
-    
+
     /**
      * Returns the revision string.
-     * 
+     *
      * @return		the revision
      */
     public String getRevision() {
@@ -146,7 +147,7 @@ public class FastVector
   /** The capacity increment */
   private /*@spec_public@*/ int m_CapacityIncrement = 1;
   //@ invariant 1 <= m_CapacityIncrement;
-  
+
   /** The capacity multiplier. */
   private /*@spec_public@*/ int m_CapacityMultiplier = 2;
   //@ invariant 1 <= m_CapacityMultiplier;
@@ -159,7 +160,7 @@ public class FastVector
    * capacity zero.
    */
   public FastVector() {
-  
+
     m_Objects = new Object[0];
   }
 
@@ -202,7 +203,7 @@ public class FastVector
    */
   //@ ensures \result == m_Objects.length;
   public final /*@pure@*/ int capacity() {
-  
+
     return m_Objects.length;
   }
 
@@ -225,7 +226,7 @@ public class FastVector
   /**
    * Clones the vector and shallow copies all its elements.
    * The elements have to implement the Copyable interface.
-   * 
+   *
    * @return the new vector
    */
   public final Object copyElements() {
@@ -260,7 +261,7 @@ public class FastVector
    * @return an enumeration of this vector
    */
   public final /*@pure@*/ Enumeration elements() {
-  
+
     return new FastVectorEnumeration(this);
   }
 
@@ -273,7 +274,7 @@ public class FastVector
    */
   //@ requires 0 <= index && index < size();
   public final /*@pure@*/ Enumeration elements(int index) {
-  
+
     return new FastVectorEnumeration(this, index);
   }
 
@@ -284,10 +285,10 @@ public class FastVector
       if(o==null)
 	  return false;
 
-      for(int i=0; i<m_Objects.length; i++) 
+      for(int i=0; i<m_Objects.length; i++)
 	  if(o.equals(m_Objects[i]))
 	      return true;
-      
+
       return false;
   }
 
@@ -304,11 +305,11 @@ public class FastVector
   }
 
   /**
-   * Searches for the first occurence of the given argument, 
-   * testing for equality using the equals method. 
+   * Searches for the first occurence of the given argument,
+   * testing for equality using the equals method.
    *
    * @param element the element to be found
-   * @return the index of the first occurrence of the argument 
+   * @return the index of the first occurrence of the argument
    * in this vector; returns -1 if the object is not found
    */
   public final /*@pure@*/ int indexOf(/*@non_null@*/ Object element) {
@@ -332,7 +333,7 @@ public class FastVector
     Object[] newObjects;
 
     if (m_Size < m_Objects.length) {
-      System.arraycopy(m_Objects, index, m_Objects, index + 1, 
+      System.arraycopy(m_Objects, index, m_Objects, index + 1,
                        m_Size - index);
       m_Objects[index] = element;
     } else {
@@ -367,7 +368,7 @@ public class FastVector
   //@ requires 0 <= index && index < m_Size;
   public final void removeElementAt(int index) {
 
-    System.arraycopy(m_Objects, index + 1, m_Objects, index, 
+    System.arraycopy(m_Objects, index + 1, m_Objects, index,
                      m_Size - index - 1);
 
     // clear the last reference
@@ -377,8 +378,8 @@ public class FastVector
   }
 
   /**
-   * Removes all components from this vector and sets its 
-   * size to zero. 
+   * Removes all components from this vector and sets its
+   * size to zero.
    */
   public final void removeAllElements() {
 
@@ -398,7 +399,7 @@ public class FastVector
     m_Size = m_Objects.length;
   }
 
-  /** 
+  /**
    * Returns all the elements of this vector as an array
    *
    * @return an array containing all the elements of this vector
@@ -418,7 +419,7 @@ public class FastVector
   public final void setCapacity(int capacity) {
 
     Object[] newObjects = new Object[capacity];
-   
+
     System.arraycopy(m_Objects, 0, newObjects, 0, Math.min(capacity, m_Size));
     m_Objects = newObjects;
     if (m_Objects.length < m_Size)
@@ -470,14 +471,14 @@ public class FastVector
   public final void trimToSize() {
 
     Object[] newObjects = new Object[m_Size];
-    
+
     System.arraycopy(m_Objects, 0, newObjects, 0, m_Size);
     m_Objects = newObjects;
   }
-  
+
   /**
    * Returns the revision string.
-   * 
+   *
    * @return		the revision
    */
   public String getRevision() {

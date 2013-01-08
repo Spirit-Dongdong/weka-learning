@@ -47,45 +47,54 @@ import weka.core.Utils;
 
 /**
  <!-- globalinfo-start -->
+ 读取csv文件：用逗号或tab分隔，文件的第一行保存了属性的个数和名称
  * Reads a source that is in comma separated or tab separated format. Assumes that the first row in the file determines the number of and names of the attributes.
  * <p/>
  <!-- globalinfo-end -->
- * 
+ *
  <!-- options-start -->
  * Valid options are: <p/>
- * 
+ *
+ *可选的操作包括：
+ *-N <range> 属性的范围必须是标量值（这里不太理解，数字？），可以是first-last,可以多个范围，如1,4,5-27,50-last
+ *-S <range> 属性的范围必须是字符串，可以是first-last,可以多个范围，如1,4,5-27,50-last
+ *-D <range> 属性的范围必须是日期，可以是first-last,可以多个范围，如1,4,5-27,50-last
+ *-format <data format>  规定解析日期值的字符串格式，默认为"yyyy-MM-dd'T'HH:mm:ss"
+ *-M <str>   str表示缺失值，默认为?
+ *-E <enclosure> 表示环绕string的字符，多个字符用逗号分隔。默认为"
+ *
  * <pre> -N &lt;range&gt;
  *  The range of attributes to force type to be NOMINAL.
  *  'first' and 'last' are accepted as well.
  *  Examples: "first-last", "1,4,5-27,50-last"
  *  (default: -none-)</pre>
- * 
+ *
  * <pre> -S &lt;range&gt;
  *  The range of attribute to force type to be STRING.
  *  'first' and 'last' are accepted as well.
  *  Examples: "first-last", "1,4,5-27,50-last"
  *  (default: -none-)</pre>
- * 
+ *
  * <pre> -D &lt;range&gt;
  *  The range of attribute to force type to be DATE.
  *  'first' and 'last' are accepted as well.
  *  Examples: "first-last", "1,4,5-27,50-last"
  *  (default: -none-)</pre>
- * 
+ *
  * <pre> -format &lt;date format&gt;
  *  The date formatting string to use to parse date values.
  *  (default: "yyyy-MM-dd'T'HH:mm:ss")</pre>
- * 
+ *
  * <pre> -M &lt;str&gt;
  *  The string representing a missing value.
  *  (default: ?)</pre>
- * 
+ *
  * <pre> -E &lt;enclosures&gt;
  *  The enclosure character(s) to use for strings.
  *  Specify as a comma separated list (e.g. ",' (default: '"')</pre>
- * 
+ *
  <!-- options-end -->
- * 
+ *
  * @author Mark Hall (mhall@cs.waikato.ac.nz)
  * @version $Revision: 9041 $
  * @see Loader
@@ -149,7 +158,7 @@ public class CSVLoader extends AbstractFileLoader implements BatchConverter,
 
   /**
    * Get the file extension used for arff files.
-   * 
+   *
    * @return the file extension
    */
   public String getFileExtension() {
@@ -158,7 +167,7 @@ public class CSVLoader extends AbstractFileLoader implements BatchConverter,
 
   /**
    * Returns a description of the file type.
-   * 
+   *
    * @return a short file description
    */
   public String getFileDescription() {
@@ -167,7 +176,7 @@ public class CSVLoader extends AbstractFileLoader implements BatchConverter,
 
   /**
    * Gets all the file extensions used for this type of file.
-   * 
+   *
    * @return the file extensions
    */
   public String[] getFileExtensions() {
@@ -176,7 +185,7 @@ public class CSVLoader extends AbstractFileLoader implements BatchConverter,
 
   /**
    * Returns a string describing this attribute evaluator.
-   * 
+   *
    * @return a description of the evaluator suitable for displaying in the
    *         explorer/experimenter gui
    */
@@ -188,7 +197,7 @@ public class CSVLoader extends AbstractFileLoader implements BatchConverter,
 
   /**
    * Returns an enumeration describing the available options.
-   * 
+   *
    * @return an enumeration of all the available options.
    */
   public Enumeration listOptions() {
@@ -231,42 +240,42 @@ public class CSVLoader extends AbstractFileLoader implements BatchConverter,
   /**
    * Parses a given list of options.
    * <p/>
-   * 
+   *
    <!-- options-start -->
    * Valid options are: <p/>
-   * 
+   *
    * <pre> -N &lt;range&gt;
    *  The range of attributes to force type to be NOMINAL.
    *  'first' and 'last' are accepted as well.
    *  Examples: "first-last", "1,4,5-27,50-last"
    *  (default: -none-)</pre>
-   * 
+   *
    * <pre> -S &lt;range&gt;
    *  The range of attribute to force type to be STRING.
    *  'first' and 'last' are accepted as well.
    *  Examples: "first-last", "1,4,5-27,50-last"
    *  (default: -none-)</pre>
-   * 
+   *
    * <pre> -D &lt;range&gt;
    *  The range of attribute to force type to be DATE.
    *  'first' and 'last' are accepted as well.
    *  Examples: "first-last", "1,4,5-27,50-last"
    *  (default: -none-)</pre>
-   * 
+   *
    * <pre> -format &lt;date format&gt;
    *  The date formatting string to use to parse date values.
    *  (default: "yyyy-MM-dd'T'HH:mm:ss")</pre>
-   * 
+   *
    * <pre> -M &lt;str&gt;
    *  The string representing a missing value.
    *  (default: ?)</pre>
-   * 
+   *
    * <pre> -E &lt;enclosures&gt;
    *  The enclosure character(s) to use for strings.
    *  Specify as a comma separated list (e.g. ",' (default: '"')</pre>
-   * 
+   *
    <!-- options-end -->
-   * 
+   *
    * @param options the list of options as an array of strings
    * @throws Exception if an option is not supported
    */
@@ -307,7 +316,7 @@ public class CSVLoader extends AbstractFileLoader implements BatchConverter,
 
   /**
    * Gets the current settings of the Classifier.
-   * 
+   *
    * @return an array of strings suitable for passing to setOptions
    */
   public String[] getOptions() {
@@ -343,7 +352,7 @@ public class CSVLoader extends AbstractFileLoader implements BatchConverter,
 
   /**
    * Sets the attribute range to be forced to type nominal.
-   * 
+   *
    * @param value the range
    */
   public void setNominalAttributes(String value) {
@@ -352,7 +361,7 @@ public class CSVLoader extends AbstractFileLoader implements BatchConverter,
 
   /**
    * Returns the current attribute range to be forced to type nominal.
-   * 
+   *
    * @return the range
    */
   public String getNominalAttributes() {
@@ -361,7 +370,7 @@ public class CSVLoader extends AbstractFileLoader implements BatchConverter,
 
   /**
    * Returns the tip text for this property.
-   * 
+   *
    * @return tip text for this property suitable for displaying in the
    *         explorer/experimenter gui
    */
@@ -372,7 +381,7 @@ public class CSVLoader extends AbstractFileLoader implements BatchConverter,
 
   /**
    * Sets the attribute range to be forced to type string.
-   * 
+   *
    * @param value the range
    */
   public void setStringAttributes(String value) {
@@ -381,7 +390,7 @@ public class CSVLoader extends AbstractFileLoader implements BatchConverter,
 
   /**
    * Returns the current attribute range to be forced to type string.
-   * 
+   *
    * @return the range
    */
   public String getStringAttributes() {
@@ -390,7 +399,7 @@ public class CSVLoader extends AbstractFileLoader implements BatchConverter,
 
   /**
    * Returns the tip text for this property.
-   * 
+   *
    * @return tip text for this property suitable for displaying in the
    *         explorer/experimenter gui
    */
@@ -401,7 +410,7 @@ public class CSVLoader extends AbstractFileLoader implements BatchConverter,
 
   /**
    * Set the attribute range to be forced to type date.
-   * 
+   *
    * @param value the range
    */
   public void setDateAttributes(String value) {
@@ -410,7 +419,7 @@ public class CSVLoader extends AbstractFileLoader implements BatchConverter,
 
   /**
    * Returns the current attribute range to be forced to type date.
-   * 
+   *
    * @return the range.
    */
   public String getDateAttributes() {
@@ -419,7 +428,7 @@ public class CSVLoader extends AbstractFileLoader implements BatchConverter,
 
   /**
    * Returns the tip text for this property.
-   * 
+   *
    * @return tip text for this property suitable for displaying in the
    *         explorer/experimenter gui
    */
@@ -430,7 +439,7 @@ public class CSVLoader extends AbstractFileLoader implements BatchConverter,
 
   /**
    * Set the format to use for parsing date values.
-   * 
+   *
    * @param value the format to use.
    */
   public void setDateFormat(String value) {
@@ -440,9 +449,9 @@ public class CSVLoader extends AbstractFileLoader implements BatchConverter,
 
   /**
    * Get the format to use for parsing date values.
-   * 
+   *
    * @return the format to use for parsing date values.
-   * 
+   *
    */
   public String getDateFormat() {
     return m_dateFormat;
@@ -450,7 +459,7 @@ public class CSVLoader extends AbstractFileLoader implements BatchConverter,
 
   /**
    * Returns the tip text for this property.
-   * 
+   *
    * @return tip text for this property suitable for displaying in the
    *         explorer/experimenter gui
    */
@@ -460,7 +469,7 @@ public class CSVLoader extends AbstractFileLoader implements BatchConverter,
 
   /**
    * Returns the tip text for this property.
-   * 
+   *
    * @return tip text for this property suitable for displaying in the
    *         explorer/experimenter gui
    */
@@ -470,7 +479,7 @@ public class CSVLoader extends AbstractFileLoader implements BatchConverter,
 
   /**
    * Set the character(s) to use/recognize as string enclosures
-   * 
+   *
    * @param enclosure the characters to use as string enclosures
    */
   public void setEnclosureCharacters(String enclosure) {
@@ -479,7 +488,7 @@ public class CSVLoader extends AbstractFileLoader implements BatchConverter,
 
   /**
    * Get the character(s) to use/recognize as string enclosures
-   * 
+   *
    * @return the characters to use as string enclosures
    */
   public String getEnclosureCharacters() {
@@ -488,7 +497,7 @@ public class CSVLoader extends AbstractFileLoader implements BatchConverter,
 
   /**
    * Sets the placeholder for missing values.
-   * 
+   *
    * @param value the placeholder
    */
   public void setMissingValue(String value) {
@@ -497,7 +506,7 @@ public class CSVLoader extends AbstractFileLoader implements BatchConverter,
 
   /**
    * Returns the current placeholder for missing values.
-   * 
+   *
    * @return the placeholder
    */
   public String getMissingValue() {
@@ -506,7 +515,7 @@ public class CSVLoader extends AbstractFileLoader implements BatchConverter,
 
   /**
    * Returns the tip text for this property.
-   * 
+   *
    * @return tip text for this property suitable for displaying in the
    *         explorer/experimenter gui
    */
@@ -517,7 +526,7 @@ public class CSVLoader extends AbstractFileLoader implements BatchConverter,
   /**
    * Resets the Loader object and sets the source of the data set to be the
    * supplied Stream object.
-   * 
+   *
    * @param input the input stream
    * @exception IOException if an error occurs
    */
@@ -534,7 +543,7 @@ public class CSVLoader extends AbstractFileLoader implements BatchConverter,
   /**
    * Resets the Loader object and sets the source of the data set to be the
    * supplied File object.
-   * 
+   *
    * @param file the source file.
    * @exception IOException if an error occurs
    */
@@ -546,7 +555,7 @@ public class CSVLoader extends AbstractFileLoader implements BatchConverter,
   /**
    * Determines and returns (if possible) the structure (internally the header)
    * of the data set as an empty set of instances.
-   * 
+   *
    * @return the structure of the data set as an empty set of Instances
    * @exception IOException if an error occurs
    */
@@ -570,7 +579,7 @@ public class CSVLoader extends AbstractFileLoader implements BatchConverter,
 
   /**
    * reads the structure.
-   * 
+   *
    * @param st the stream tokenizer to read from
    * @throws IOException if reading fails
    */
@@ -582,7 +591,7 @@ public class CSVLoader extends AbstractFileLoader implements BatchConverter,
    * Return the full data set. If the structure hasn't yet been determined by a
    * call to getStructure then method should do so before processing the rest of
    * the data set.
-   * 
+   *
    * @return the structure of the data set as an empty set of Instances
    * @exception IOException if there is no source or parsing fails
    */
@@ -707,7 +716,7 @@ public class CSVLoader extends AbstractFileLoader implements BatchConverter,
 
   /**
    * CSVLoader is unable to process a data set incrementally.
-   * 
+   *
    * @param structure ignored
    * @return never returns without throwing an exception
    * @exception IOException always. CSVLoader is unable to process a data set
@@ -720,12 +729,12 @@ public class CSVLoader extends AbstractFileLoader implements BatchConverter,
 
   /**
    * Attempts to parse a line of the data set.
-   * 
+   *
    * @param tokenizer the tokenizer
    * @return a FastVector containg String and Double objects representing the
    *         values of the instance.
    * @exception IOException if an error occurs
-   * 
+   *
    *              <pre>
    * <jml>
    *    private_normal_behavior
@@ -807,10 +816,10 @@ public class CSVLoader extends AbstractFileLoader implements BatchConverter,
    * the data set so far. If there is a nominal value for an attribute that was
    * beleived to be numeric then all previously seen values for this attribute
    * are stored in a Hashtable.
-   * 
+   *
    * @param current a <code>FastVector</code> value
    * @exception Exception if an error occurs
-   * 
+   *
    *              <pre>
    * <jml>
    *    private_normal_behavior
@@ -906,10 +915,10 @@ public class CSVLoader extends AbstractFileLoader implements BatchConverter,
    * Assumes the first line of the file contains the attribute names. Assumes
    * all attributes are String attributes (Reading the full data set with
    * getDataSet will establish the true structure).
-   * 
+   *
    * @param tokenizer a <code>StreamTokenizer</code> value
    * @exception IOException if an error occurs
-   * 
+   *
    *              <pre>
    * <jml>
    *    private_normal_behavior
@@ -947,7 +956,7 @@ public class CSVLoader extends AbstractFileLoader implements BatchConverter,
 
   /**
    * Initializes the stream tokenizer.
-   * 
+   *
    * @param tokenizer the tokenizer to initialize
    */
   private void initTokenizer(StreamTokenizer tokenizer) {
@@ -972,7 +981,7 @@ public class CSVLoader extends AbstractFileLoader implements BatchConverter,
 
   /**
    * Resets the Loader ready to read a new data set or the same data set again.
-   * 
+   *
    * @throws IOException if something goes wrong
    */
   @Override
@@ -988,7 +997,7 @@ public class CSVLoader extends AbstractFileLoader implements BatchConverter,
 
   /**
    * Returns the revision string.
-   * 
+   *
    * @return the revision
    */
   public String getRevision() {
@@ -997,7 +1006,7 @@ public class CSVLoader extends AbstractFileLoader implements BatchConverter,
 
   /**
    * Main method.
-   * 
+   *
    * @param args should contain the name of an input file.
    */
   public static void main(String[] args) {
