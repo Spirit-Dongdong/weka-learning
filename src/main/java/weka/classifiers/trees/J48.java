@@ -74,50 +74,50 @@ import java.util.Vector;
  *
  <!-- options-start -->
  * Valid options are: <p/>
- * 
+ *
  * <pre> -U
  *  Use unpruned tree.</pre>
- * 
+ *
  * <pre> -C &lt;pruning confidence&gt;
  *  Set confidence threshold for pruning.
  *  (default 0.25)</pre>
- * 
+ *
  * <pre> -M &lt;minimum number of instances&gt;
  *  Set minimum number of instances per leaf.
  *  (default 2)</pre>
- * 
+ *
  * <pre> -R
  *  Use reduced error pruning.</pre>
- * 
+ *
  * <pre> -N &lt;number of folds&gt;
  *  Set number of folds for reduced error
  *  pruning. One fold is used as pruning set.
  *  (default 3)</pre>
- * 
+ *
  * <pre> -B
  *  Use binary splits only.</pre>
- * 
+ *
  * <pre> -S
  *  Don't perform subtree raising.</pre>
- * 
+ *
  * <pre> -L
  *  Do not clean up after the tree has been built.</pre>
- * 
+ *
  * <pre> -A
  *  Laplace smoothing for predicted probabilities.</pre>
- * 
+ *
  * <pre> -Q &lt;seed&gt;
  *  Seed for random data shuffling (default 1).</pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author Eibe Frank (eibe@cs.waikato.ac.nz)
  * @version $Revision: 1.9 $
  */
-public class J48 
-  extends Classifier 
-  implements OptionHandler, Drawable, Matchable, Sourcable, 
-             WeightedInstancesHandler, Summarizable, AdditionalMeasureProducer, 
+public class J48
+  extends Classifier
+  implements OptionHandler, Drawable, Matchable, Sourcable,
+             WeightedInstancesHandler, Summarizable, AdditionalMeasureProducer,
              TechnicalInformationHandler {
 
   /** for serialization */
@@ -125,7 +125,7 @@ public class J48
 
   /** The decision tree */
   private ClassifierTree m_root;
-  
+
   /** Unpruned tree? */
   private boolean m_unpruned = false;
 
@@ -170,22 +170,22 @@ public class J48
   }
 
   /**
-   * Returns an instance of a TechnicalInformation object, containing 
+   * Returns an instance of a TechnicalInformation object, containing
    * detailed information about the technical background of this class,
    * e.g., paper reference or book this class is based on.
-   * 
+   *
    * @return the technical information about this class
    */
   public TechnicalInformation getTechnicalInformation() {
     TechnicalInformation 	result;
-    
+
     result = new TechnicalInformation(Type.BOOK);
     result.setValue(Field.AUTHOR, "Ross Quinlan");
     result.setValue(Field.YEAR, "1993");
     result.setValue(Field.TITLE, "C4.5: Programs for Machine Learning");
     result.setValue(Field.PUBLISHER, "Morgan Kaufmann Publishers");
     result.setValue(Field.ADDRESS, "San Mateo, CA");
-    
+
     return result;
   }
 
@@ -196,7 +196,7 @@ public class J48
    */
   public Capabilities getCapabilities() {
     Capabilities      result;
-    
+
     try {
       if (!m_reducedErrorPruning)
         result = new C45PruneableClassifierTree(null, !m_unpruned, m_CF, m_subtreeRaising, !m_noCleanup).getCapabilities();
@@ -206,22 +206,22 @@ public class J48
     catch (Exception e) {
       result = new Capabilities(this);
     }
-    
+
     result.setOwner(this);
-    
+
     return result;
   }
-  
+
   /**
    * Generates the classifier.
    *
    * @param instances the data to train the classifier with
    * @throws Exception if classifier can't be built successfully
    */
-  public void buildClassifier(Instances instances) 
+  public void buildClassifier(Instances instances)
        throws Exception {
 
-    ModelSelection modSelection;	 
+    ModelSelection modSelection;
 
     if (m_binarySplits)
       modSelection = new BinC45ModelSelection(m_minNumObj, instances);
@@ -253,14 +253,14 @@ public class J48
     return m_root.classifyInstance(instance);
   }
 
-  /** 
+  /**
    * Returns class probabilities for an instance.
    *
    * @param instance the instance to calculate the class probabilities for
    * @return the class probabilities
    * @throws Exception if distribution can't be computed successfully
    */
-  public final double [] distributionForInstance(Instance instance) 
+  public final double [] distributionForInstance(Instance instance)
        throws Exception {
 
     return m_root.distributionForInstance(instance, m_useLaplace);
@@ -270,7 +270,7 @@ public class J48
    *  Returns the type of graph this classifier
    *  represents.
    *  @return Drawable.TREE
-   */   
+   */
   public int graphType() {
       return Drawable.TREE;
   }
@@ -293,7 +293,7 @@ public class J48
    * @throws Exception if something goes wrong
    */
   public String prefix() throws Exception {
-    
+
     return m_root.prefix();
   }
 
@@ -301,14 +301,14 @@ public class J48
   /**
    * Returns tree as an if-then statement.
    *
-   * @param className the name of the Java class 
+   * @param className the name of the Java class
    * @return the tree as a Java if-then type statement
    * @throws Exception if something goes wrong
    */
   public String toSource(String className) throws Exception {
 
     StringBuffer [] source = m_root.toSource(className);
-    return 
+    return
     "class " + className + " {\n\n"
     +"  public static double classify(Object[] i)\n"
     +"    throws Exception {\n\n"
@@ -402,51 +402,51 @@ public class J48
 
   /**
    * Parses a given list of options.
-   * 
+   *
    <!-- options-start -->
    * Valid options are: <p/>
-   * 
+   *
    * <pre> -U
    *  Use unpruned tree.</pre>
-   * 
+   *
    * <pre> -C &lt;pruning confidence&gt;
    *  Set confidence threshold for pruning.
    *  (default 0.25)</pre>
-   * 
+   *
    * <pre> -M &lt;minimum number of instances&gt;
    *  Set minimum number of instances per leaf.
    *  (default 2)</pre>
-   * 
+   *
    * <pre> -R
    *  Use reduced error pruning.</pre>
-   * 
+   *
    * <pre> -N &lt;number of folds&gt;
    *  Set number of folds for reduced error
    *  pruning. One fold is used as pruning set.
    *  (default 3)</pre>
-   * 
+   *
    * <pre> -B
    *  Use binary splits only.</pre>
-   * 
+   *
    * <pre> -S
    *  Don't perform subtree raising.</pre>
-   * 
+   *
    * <pre> -L
    *  Do not clean up after the tree has been built.</pre>
-   * 
+   *
    * <pre> -A
    *  Laplace smoothing for predicted probabilities.</pre>
-   * 
+   *
    * <pre> -Q &lt;seed&gt;
    *  Seed for random data shuffling (default 1).</pre>
-   * 
+   *
    <!-- options-end -->
    *
    * @param options the list of options as an array of strings
    * @throws Exception if an option is not supported
    */
   public void setOptions(String[] options) throws Exception {
-    
+
     // Other options
     String minNumString = Utils.getOption('M', options);
     if (minNumString.length() != 0) {
@@ -564,17 +564,17 @@ public class J48
    * @return Value of Seed.
    */
   public int getSeed() {
-    
+
     return m_Seed;
   }
-  
+
   /**
    * Set the value of Seed.
    *
    * @param newSeed Value to assign to Seed.
    */
   public void setSeed(int newSeed) {
-    
+
     m_Seed = newSeed;
   }
 
@@ -593,23 +593,23 @@ public class J48
    * @return Value of useLaplace.
    */
   public boolean getUseLaplace() {
-    
+
     return m_useLaplace;
   }
-  
+
   /**
    * Set the value of useLaplace.
    *
    * @param newuseLaplace Value to assign to useLaplace.
    */
   public void setUseLaplace(boolean newuseLaplace) {
-    
+
     m_useLaplace = newuseLaplace;
   }
-  
+
   /**
    * Returns a description of the classifier.
-   * 
+   *
    * @return a description of the classifier
    */
   public String toString() {
@@ -625,7 +625,7 @@ public class J48
 
   /**
    * Returns a superconcise version of the model
-   * 
+   *
    * @return a summary of the model
    */
   public String toSummaryString() {
@@ -657,7 +657,7 @@ public class J48
   public double measureNumRules() {
     return m_root.numLeaves();
   }
-  
+
   /**
    * Returns an enumeration of the additional measure names
    * @return an enumeration of the measure names
@@ -684,11 +684,11 @@ public class J48
     } else if (additionalMeasureName.compareToIgnoreCase("measureNumLeaves") == 0) {
       return measureNumLeaves();
     } else {
-      throw new IllegalArgumentException(additionalMeasureName 
+      throw new IllegalArgumentException(additionalMeasureName
 			  + " not supported (j48)");
     }
   }
-  
+
   /**
    * Returns the tip text for this property
    * @return tip text for this property suitable for
@@ -704,10 +704,10 @@ public class J48
    * @return Value of unpruned.
    */
   public boolean getUnpruned() {
-    
+
     return m_unpruned;
   }
-  
+
   /**
    * Set the value of unpruned. Turns reduced-error pruning
    * off if set.
@@ -730,27 +730,27 @@ public class J48
     return "The confidence factor used for pruning (smaller values incur "
       + "more pruning).";
   }
-  
+
   /**
    * Get the value of CF.
    *
    * @return Value of CF.
    */
   public float getConfidenceFactor() {
-    
+
     return m_CF;
   }
-  
+
   /**
    * Set the value of CF.
    *
    * @param v  Value to assign to CF.
    */
   public void setConfidenceFactor(float v) {
-    
+
     m_CF = v;
   }
-   
+
   /**
    * Returns the tip text for this property
    * @return tip text for this property suitable for
@@ -766,17 +766,17 @@ public class J48
    * @return Value of minNumObj.
    */
   public int getMinNumObj() {
-    
+
     return m_minNumObj;
   }
-  
+
   /**
    * Set the value of minNumObj.
    *
    * @param v  Value to assign to minNumObj.
    */
   public void setMinNumObj(int v) {
-    
+
     m_minNumObj = v;
   }
 
@@ -788,17 +788,17 @@ public class J48
   public String reducedErrorPruningTipText() {
     return "Whether reduced-error pruning is used instead of C.4.5 pruning.";
   }
- 
+
   /**
-   * Get the value of reducedErrorPruning. 
+   * Get the value of reducedErrorPruning.
    *
    * @return Value of reducedErrorPruning.
    */
   public boolean getReducedErrorPruning() {
-    
+
     return m_reducedErrorPruning;
   }
-  
+
   /**
    * Set the value of reducedErrorPruning. Turns
    * unpruned trees off if set.
@@ -806,13 +806,13 @@ public class J48
    * @param v  Value to assign to reducedErrorPruning.
    */
   public void setReducedErrorPruning(boolean v) {
-    
+
     if (v) {
       m_unpruned = false;
     }
     m_reducedErrorPruning = v;
   }
-  
+
   /**
    * Returns the tip text for this property
    * @return tip text for this property suitable for
@@ -829,20 +829,20 @@ public class J48
    * @return Value of numFolds.
    */
   public int getNumFolds() {
-    
+
     return m_numFolds;
   }
-  
+
   /**
    * Set the value of numFolds.
    *
    * @param v  Value to assign to numFolds.
    */
   public void setNumFolds(int v) {
-    
+
     m_numFolds = v;
   }
- 
+
   /**
    * Returns the tip text for this property
    * @return tip text for this property suitable for
@@ -852,27 +852,27 @@ public class J48
     return "Whether to use binary splits on nominal attributes when "
       + "building the trees.";
   }
-  
+
   /**
    * Get the value of binarySplits.
    *
    * @return Value of binarySplits.
    */
   public boolean getBinarySplits() {
-    
+
     return m_binarySplits;
   }
-  
+
   /**
    * Set the value of binarySplits.
    *
    * @param v  Value to assign to binarySplits.
    */
   public void setBinarySplits(boolean v) {
-    
+
     m_binarySplits = v;
   }
-  
+
   /**
    * Returns the tip text for this property
    * @return tip text for this property suitable for
@@ -881,24 +881,24 @@ public class J48
   public String subtreeRaisingTipText() {
     return "Whether to consider the subtree raising operation when pruning.";
   }
- 
+
   /**
    * Get the value of subtreeRaising.
    *
    * @return Value of subtreeRaising.
    */
   public boolean getSubtreeRaising() {
-    
+
     return m_subtreeRaising;
   }
-  
+
   /**
    * Set the value of subtreeRaising.
    *
    * @param v  Value to assign to subtreeRaising.
    */
   public void setSubtreeRaising(boolean v) {
-    
+
     m_subtreeRaising = v;
   }
 
@@ -917,34 +917,35 @@ public class J48
    * @return true if instance data is saved
    */
   public boolean getSaveInstanceData() {
-    
+
     return m_noCleanup;
   }
-  
+
   /**
    * Set whether instance data is to be saved.
    * @param v true if instance data is to be saved
    */
   public void setSaveInstanceData(boolean v) {
-    
+
     m_noCleanup = v;
   }
-  
+
   /**
    * Returns the revision string.
-   * 
+   *
    * @return		the revision
    */
   public String getRevision() {
     return RevisionUtils.extract("$Revision: 1.9 $");
   }
- 
+
   /**
    * Main method for testing this class
    *
    * @param argv the commandline options
    */
   public static void main(String [] argv){
-    runClassifier(new J48(), argv);
+	String[] argvs = {"-t", "/home/dd/learn/weka-learning/data/weather.arff"};
+    runClassifier(new J48(), argvs);
   }
 }
