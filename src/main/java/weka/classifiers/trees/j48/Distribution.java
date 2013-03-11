@@ -44,16 +44,16 @@ public class Distribution
   private static final long serialVersionUID = 8526859638230806576L;
 
   /** Weight of instances per class per bag. */
-  private double m_perClassPerBag[][]; 
+  private double m_perClassPerBag[][];
 
   /** Weight of instances per bag. */
-  private double m_perBag[];           
+  private double m_perBag[];
 
   /** Weight of instances per class. */
-  private double m_perClass[];         
+  private double m_perClass[];
 
   /** Total weight of instances. */
-  private double totaL;            
+  private double totaL;
 
   /**
    * Creates and initializes a new distribution.
@@ -81,7 +81,7 @@ public class Distribution
     m_perClassPerBag = table;
     m_perBag = new double [table.length];
     m_perClass = new double [table[0].length];
-    for (i = 0; i < table.length; i++) 
+    for (i = 0; i < table.length; i++)
       for (j  = 0; j < table[i].length; j++) {
 	m_perBag[i] += table[i][j];
 	m_perClass[j] += table[i][j];
@@ -96,7 +96,7 @@ public class Distribution
    * @exception Exception if something goes wrong
    */
   public Distribution(Instances source) throws Exception {
-    
+
     m_perClassPerBag = new double [1][0];
     m_perBag = new double [1];
     totaL = 0;
@@ -114,7 +114,7 @@ public class Distribution
    * @exception Exception if something goes wrong
    */
 
-  public Distribution(Instances source, 
+  public Distribution(Instances source,
 		      ClassifierSplitModel modelToUse)
        throws Exception {
 
@@ -180,19 +180,19 @@ public class Distribution
     m_perBag[0] = toMerge.m_perBag[index];
     m_perBag[1] = totaL-m_perBag[0];
   }
-  
+
   /**
    * Returns number of non-empty bags of distribution.
    */
   public final int actualNumBags() {
-    
+
     int returnValue = 0;
     int i;
 
     for (i=0;i<m_perBag.length;i++)
       if (Utils.gr(m_perBag[i],0))
 	returnValue++;
-    
+
     return returnValue;
   }
 
@@ -207,7 +207,7 @@ public class Distribution
     for (i=0;i<m_perClass.length;i++)
       if (Utils.gr(m_perClass[i],0))
 	returnValue++;
-    
+
     return returnValue;
   }
 
@@ -222,7 +222,7 @@ public class Distribution
     for (i=0;i<m_perClass.length;i++)
       if (Utils.gr(m_perClassPerBag[bagIndex][i],0))
 	returnValue++;
-    
+
     return returnValue;
   }
 
@@ -231,15 +231,15 @@ public class Distribution
    *
    * @exception Exception if something goes wrong
    */
-  public final void add(int bagIndex,Instance instance) 
+  public final void add(int bagIndex,Instance instance)
        throws Exception {
-    
+
     int classIndex;
     double weight;
 
     classIndex = (int)instance.classValue();
     weight = instance.weight();
-    m_perClassPerBag[bagIndex][classIndex] = 
+    m_perClassPerBag[bagIndex][classIndex] =
       m_perClassPerBag[bagIndex][classIndex]+weight;
     m_perBag[bagIndex] = m_perBag[bagIndex]+weight;
     m_perClass[classIndex] = m_perClass[classIndex]+weight;
@@ -251,15 +251,15 @@ public class Distribution
    *
    * @exception Exception if something goes wrong
    */
-  public final void sub(int bagIndex,Instance instance) 
+  public final void sub(int bagIndex,Instance instance)
        throws Exception {
-    
+
     int classIndex;
     double weight;
 
     classIndex = (int)instance.classValue();
     weight = instance.weight();
-    m_perClassPerBag[bagIndex][classIndex] = 
+    m_perClassPerBag[bagIndex][classIndex] =
       m_perClassPerBag[bagIndex][classIndex]-weight;
     m_perBag[bagIndex] = m_perBag[bagIndex]-weight;
     m_perClass[classIndex] = m_perClass[classIndex]-weight;
@@ -270,7 +270,7 @@ public class Distribution
    * Adds counts to given bag.
    */
   public final void add(int bagIndex, double[] counts) {
-    
+
     double sum = Utils.sum(counts);
 
     for (int i = 0; i < counts.length; i++)
@@ -353,7 +353,7 @@ public class Distribution
    *
    * @exception Exception if something goes wrong
    */
-  public final void addWeights(Instance instance, 
+  public final void addWeights(Instance instance,
 			       double [] weights)
        throws Exception {
 
@@ -404,7 +404,7 @@ public class Distribution
     for (j=0;j<m_perClass.length;j++)
       newDistribution.m_perClass[j] = m_perClass[j];
     newDistribution.totaL = totaL;
-  
+
     return newDistribution;
   }
 
@@ -413,7 +413,7 @@ public class Distribution
    *
    * @exception Exception if something goes wrong
    */
-  public final void del(int bagIndex,Instance instance) 
+  public final void del(int bagIndex,Instance instance)
        throws Exception {
 
     int classIndex;
@@ -421,7 +421,7 @@ public class Distribution
 
     classIndex = (int)instance.classValue();
     weight = instance.weight();
-    m_perClassPerBag[bagIndex][classIndex] = 
+    m_perClassPerBag[bagIndex][classIndex] =
       m_perClassPerBag[bagIndex][classIndex]-weight;
     m_perBag[bagIndex] = m_perBag[bagIndex]-weight;
     m_perClass[classIndex] = m_perClass[classIndex]-weight;
@@ -456,7 +456,7 @@ public class Distribution
   /**
    * Prints distribution.
    */
-  
+
   public final String dumpDistribution() {
 
     StringBuffer text;
@@ -476,7 +476,7 @@ public class Distribution
    */
   public final void initialize() {
 
-    for (int i = 0; i < m_perClass.length; i++) 
+    for (int i = 0; i < m_perClass.length; i++)
       m_perClass[i] = 0;
     for (int i = 0; i < m_perBag.length; i++)
       m_perBag[i] = 0;
@@ -493,7 +493,7 @@ public class Distribution
 
     return m_perClassPerBag;
   }
-  
+
   /**
    * Returns index of bag containing maximum number of instances.
    */
@@ -502,7 +502,7 @@ public class Distribution
     double max;
     int maxIndex;
     int i;
-    
+
     max = 0;
     maxIndex = -1;
     for (i=0;i<m_perBag.length;i++)
@@ -514,7 +514,7 @@ public class Distribution
   }
 
   /**
-   * Returns class with highest frequency over all bags.
+   * Returns class with highest frequency over all bags. 返回所有bag下频数最多的的类，bag理解为各个级别的子树？
    */
   public final int maxClass() {
 
@@ -555,7 +555,7 @@ public class Distribution
    * Returns number of bags.
    */
   public final int numBags() {
-    
+
     return m_perBag.length;
   }
 
@@ -600,7 +600,7 @@ public class Distribution
   }
 
   /**
-   * Returns number of (possibly fractional) instances of given class in 
+   * Returns number of (possibly fractional) instances of given class in
    * given bag.
    */
   public final double perClassPerBag(int bagIndex, int classIndex) {
@@ -630,7 +630,7 @@ public class Distribution
    */
   public final double laplaceProb(int classIndex) {
 
-    return (m_perClass[classIndex] + 1) / 
+    return (m_perClass[classIndex] + 1) /
       (totaL + (double) m_perClass.length);
   }
 
@@ -644,7 +644,7 @@ public class Distribution
 	           (m_perBag[intIndex] + (double) m_perClass.length);
 	  else
 	    return laplaceProb(classIndex);
-	  
+
   }
 
   /**
@@ -670,7 +670,7 @@ public class Distribution
       return prob(classIndex);
   }
 
-  /** 
+  /**
    * Subtracts the given distribution from this one. The results
    * has only one bag.
    */
@@ -700,9 +700,9 @@ public class Distribution
    *
    * @exception Exception if something goes wrong
    */
-  public final void shift(int from,int to,Instance instance) 
+  public final void shift(int from,int to,Instance instance)
        throws Exception {
-    
+
     int classIndex;
     double weight;
 
@@ -720,9 +720,9 @@ public class Distribution
    * @exception Exception if something goes wrong
    */
   public final void shiftRange(int from,int to,Instances source,
-			       int startIndex,int lastPlusOne) 
+			       int startIndex,int lastPlusOne)
        throws Exception {
-    
+
     int classIndex;
     double weight;
     Instance instance;
@@ -738,10 +738,10 @@ public class Distribution
       m_perBag[to] += weight;
     }
   }
-  
+
   /**
    * Returns the revision string.
-   * 
+   *
    * @return		the revision
    */
   public String getRevision() {
