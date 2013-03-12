@@ -61,7 +61,7 @@ public class C45Split extends ClassifierSplitModel {
 	/** The sum of the weights of the instances. */
 	private double m_sumOfWeights;
 
-	/** Number of split points. */
+	/** Number of split points. 分割点的个数（起这么个倒霉名字）*/
 	private int m_index;
 
 	/** Static reference to splitting criterion. */
@@ -191,6 +191,8 @@ public class C45Split extends ClassifierSplitModel {
 
 		// Check if minimum number of Instances in at least two
 		// subsets.
+		//计算当前属性的信息增益和信息增益率，注意是针对这个属性的～
+		//C4.5会比较各个属性的信息增益率，然后选最大的作为第一次分割～
 		if (m_distribution.check(m_minNoObj)) {
 			m_numSubsets = m_complexityIndex;
 			m_infoGain = infoGainCrit.splitCritValue(m_distribution,
@@ -260,19 +262,21 @@ public class C45Split extends ClassifierSplitModel {
 
 				// Move class values for all Instances up to next
 				// possible split point.
+				//把[last, next)的instance从1号bag移动到0号bag
 				m_distribution.shiftRange(1, 0, trainInstances, last, next);
 
 				// Check if enough Instances in each subset and compute
 				// values for criteria.
+				//每个bag内的元素个数都要>=minSplit才有计算信息增益的必要
 				if (Utils.grOrEq(m_distribution.perBag(0), minSplit)
 						&& Utils.grOrEq(m_distribution.perBag(1), minSplit)) {
 					currentInfoGain = infoGainCrit.splitCritValue(
 							m_distribution, m_sumOfWeights, defaultEnt);
-					if (Utils.gr(currentInfoGain, m_infoGain)) {
+					if (Utils.gr(currentInfoGain, m_infoGain)) {//发现了更大的信息增益，保存并记录下当前的分割点
 						m_infoGain = currentInfoGain;
 						splitIndex = next - 1;
 					}
-					m_index++;
+					m_index++;//
 				}
 				last = next;
 			}
@@ -284,12 +288,14 @@ public class C45Split extends ClassifierSplitModel {
 			return;
 
 		// Compute modified information gain for best split.
+		//这就是C45不同于ID3的地方，它的信息增益会对分割点有个惩罚来避免overfit，已避免像id这种每个值一个分割点的情况
 		m_infoGain = m_infoGain - (Utils.log2(m_index) / m_sumOfWeights);
 		if (Utils.smOrEq(m_infoGain, 0))
 			return;
 
 		// Set instance variables' values to values for
 		// best split.
+		//分割点是2项的平均值，如果这两项相等的话，取前面的那项
 		m_numSubsets = 2;
 		m_splitPoint = (trainInstances.instance(splitIndex + 1).value(
 				m_attIndex) + trainInstances.instance(splitIndex).value(
@@ -303,7 +309,7 @@ public class C45Split extends ClassifierSplitModel {
 					.value(m_attIndex);
 		}
 
-		// Restore distributioN for best split.
+		// Restore distributioN for best split.这里就分别分到0和1这两个bag里啦～
 		m_distribution = new Distribution(2, trainInstances.numClasses());
 		m_distribution.addRange(0, trainInstances, 0, splitIndex + 1);
 		m_distribution.addRange(1, trainInstances, splitIndex + 1, firstMiss);
