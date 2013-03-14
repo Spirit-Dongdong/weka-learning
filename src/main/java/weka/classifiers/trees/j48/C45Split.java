@@ -479,7 +479,7 @@ public class C45Split extends ClassifierSplitModel {
 	/**
 	 * Returns index of subset instance is assigned to. Returns -1 if instance
 	 * is assigned to more than one subset.
-	 *
+	 * 以二叉树查找的方式判断某实例应该放到哪个bag下
 	 * @exception Exception
 	 *                if something goes wrong
 	 */
